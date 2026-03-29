@@ -131,6 +131,46 @@ describe('POST /v1/capabilities/run', () => {
   });
 });
 
+describe('POST /v1/capabilities/run — image_caption', () => {
+  it('should return a mock caption for a valid image URL', async () => {
+    const res = await request(app)
+      .post('/v1/capabilities/run')
+      .send({
+        capability: 'image_caption',
+        input: { image_url: 'https://example.com/photo.jpg' },
+      });
+
+    expect(res.status).toBe(200);
+    expect(res.body.ok).toBe(true);
+    expect(res.body.data.result).toBeTypeOf('string');
+    expect(res.body.meta.capability).toBe('image_caption');
+  });
+
+  it('should return 400 for missing image_url', async () => {
+    const res = await request(app)
+      .post('/v1/capabilities/run')
+      .send({
+        capability: 'image_caption',
+        input: {},
+      });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe('VALIDATION_ERROR');
+  });
+
+  it('should return 400 for invalid URL format', async () => {
+    const res = await request(app)
+      .post('/v1/capabilities/run')
+      .send({
+        capability: 'image_caption',
+        input: { image_url: 'not-a-url' },
+      });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe('VALIDATION_ERROR');
+  });
+});
+
 describe('GET /v1/capabilities', () => {
   it('should list registered capabilities', async () => {
     const res = await request(app).get('/v1/capabilities');
@@ -138,6 +178,7 @@ describe('GET /v1/capabilities', () => {
     expect(res.status).toBe(200);
     expect(res.body.ok).toBe(true);
     expect(res.body.capabilities).toContain('text_summary');
+    expect(res.body.capabilities).toContain('image_caption');
   });
 });
 

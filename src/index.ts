@@ -3,6 +3,7 @@ import { config } from './config.js';
 
 // Register capabilities (side-effect imports)
 import './capabilities/text-summary.js';
+import './capabilities/image-caption.js';
 
 import { requestLogger } from './middleware/request-logger.js';
 import { errorHandler } from './middleware/error-handler.js';
