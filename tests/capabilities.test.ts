@@ -118,6 +118,18 @@ describe('POST /v1/capabilities/run', () => {
     expect(res.body.error.code).toBe('VALIDATION_ERROR');
   });
 
+  it('should return 400 for malformed JSON body', async () => {
+    const res = await request(app)
+      .post('/v1/capabilities/run')
+      .set('Content-Type', 'application/json')
+      .send('{broken json');
+
+    expect(res.status).toBe(400);
+    expect(res.body.ok).toBe(false);
+    expect(res.body.error.code).toBe('VALIDATION_ERROR');
+    expect(res.body.meta).toBeDefined();
+  });
+
   it('should validate max_length is a positive number', async () => {
     const res = await request(app)
       .post('/v1/capabilities/run')
